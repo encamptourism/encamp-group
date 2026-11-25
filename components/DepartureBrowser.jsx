@@ -120,7 +120,7 @@ function DepartureCard({ d }) {
                 <div className="text-2xl font-extrabold leading-none text-ink">{inr(d.price)}<span className="ml-1 text-xs font-medium text-muted">/person</span></div>
               </div>
             ) : <span />}
-            <span className={`whitespace-nowrap text-xs font-semibold ${sold ? "text-muted" : d.availableSeats <= 3 ? "text-red-600" : "text-brand-dark"}`}>
+            <span className={`whitespace-nowrap text-xs font-semibold ${sold ? "text-muted" : "text-heirloom"}`}>
               {sold ? "Sold out" : badge ? badge.text : `${d.availableSeats} of ${d.totalSeats} seats left`}
             </span>
           </div>
@@ -129,16 +129,24 @@ function DepartureCard({ d }) {
             <div className={`h-full rounded-full transition-all ${sold ? "bg-muted/40" : d.availableSeats <= 3 ? "bg-red-500" : badge ? "bg-amber-500" : "bg-brand"}`}
               style={{ width: `${d.totalSeats ? Math.min(100, ((d.totalSeats - d.availableSeats) / d.totalSeats) * 100) : 0}%` }} />
           </div>
-          <div className="mt-4 flex gap-2">
-            <a href={d.url} target="_blank" rel="noopener noreferrer" className={`${btn} border border-ink/80 text-ink hover:bg-mint`}>
+          {/* Book Now = the trip's own page (booking form lives there); WhatsApp = book with us in chat. */}
+          <div className="mt-4 grid grid-cols-[auto_minmax(0,1fr)] gap-2">
+            {sold ? (
+              <span aria-disabled="true" className={`${btn} col-span-2 cursor-not-allowed bg-line text-muted`}>Sold out</span>
+            ) : (
+              <a href={d.url} target="_blank" rel="noopener noreferrer" className={`${btn} col-span-2 bg-heirloom text-white hover:brightness-110`}>
+                Book Now <Icon name="arrow" />
+              </a>
+            )}
+            <a href={d.url} target="_blank" rel="noopener noreferrer" className={`${btn} border border-ink/80 px-5 text-ink hover:bg-mint`}>
               Details <Icon name="arrow" />
             </a>
             {sold ? (
-              <span aria-disabled="true" className={`${btn} cursor-not-allowed bg-line text-muted`}><Icon name="chat" /> Book seat</span>
+              <span aria-disabled="true" className={`${btn} cursor-not-allowed whitespace-nowrap bg-line text-muted`}><Icon name="chat" /> Book via WhatsApp</span>
             ) : (
               <a href={whatsappLink(`Hi Encamp, I want to book "${d.title}" departing ${fmt(d.date, { day: "numeric", month: "long", year: "numeric" })}.`)}
-                target="_blank" rel="noopener noreferrer" className={`${btn} bg-ink text-white hover:bg-brand-dark`}>
-                <Icon name="chat" /> Book seat
+                target="_blank" rel="noopener noreferrer" className={`${btn} whitespace-nowrap bg-ink text-white hover:bg-brand-dark`}>
+                <Icon name="chat" /> Book via WhatsApp
               </a>
             )}
           </div>
@@ -162,7 +170,7 @@ function Step({ n, title, hint, children }) {
   return (
     <div className="rounded-3xl border border-line bg-white/90 p-4 shadow-lg shadow-ink/5 backdrop-blur sm:p-5">
       <div className="flex items-start gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ink text-sm font-extrabold text-brand">{n}</span>
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-heirloom text-sm font-extrabold text-white">{n}</span>
         <div>
           <h3 className="text-lg font-bold leading-tight text-ink">{title}</h3>
           <p className="text-sm text-muted">{hint}</p>
@@ -175,7 +183,7 @@ function Step({ n, title, hint, children }) {
 
 const tile = (on, empty) =>
   `flex flex-col items-center justify-center rounded-2xl border px-2 py-2.5 text-center transition ${
-    on ? "border-ink bg-ink text-white shadow-lg" : empty ? "border-dashed border-line bg-white/60 text-muted hover:border-brand" : "border-line bg-white text-ink hover:border-brand hover:bg-mint"
+    on ? "border-heirloom bg-heirloom text-white shadow-lg" : empty ? "border-dashed border-line bg-white/60 text-muted hover:border-brand" : "border-line bg-white text-ink hover:border-brand hover:bg-mint"
   }`;
 
 export default function DepartureBrowser({ departures, children }) {
@@ -233,16 +241,16 @@ export default function DepartureBrowser({ departures, children }) {
                   <div role="group" aria-label="Month" className="grid grid-cols-3 gap-2 min-[420px]:grid-cols-5 lg:grid-cols-10">
                     <button type="button" onClick={() => setMonth("")} aria-pressed={!month} className={tile(!month)}>
                       <span className="text-sm font-bold">Any month</span>
-                      <span className={`mt-0.5 text-[11px] ${!month ? "text-brand" : "text-muted"}`}>{plural(monthCount(""), "trip")}</span>
+                      <span className={`mt-0.5 text-[11px] ${!month ? "text-white/85" : "text-muted"}`}>{plural(monthCount(""), "trip")}</span>
                     </button>
                     {months.map((m) => {
                       const n = monthCount(m);
                       const on = m === month;
                       return (
                         <button key={m} type="button" onClick={() => setMonth(m)} aria-pressed={on} className={tile(on, !n)}>
-                          <span className={`text-[10px] font-semibold uppercase tracking-wider ${on ? "text-white/60" : "text-muted"}`}>{m.slice(0, 4)}</span>
+                          <span className={`text-[10px] font-semibold uppercase tracking-wider ${on ? "text-white/75" : "text-muted"}`}>{m.slice(0, 4)}</span>
                           <span className="text-base font-extrabold leading-tight">{monthName(m, { month: "short" })}</span>
-                          <span className={`mt-0.5 text-[11px] ${on ? "text-brand" : "text-muted"}`}>{n ? plural(n, "trip") : "None"}</span>
+                          <span className={`mt-0.5 text-[11px] ${on ? "text-white/85" : "text-muted"}`}>{n ? plural(n, "trip") : "None"}</span>
                         </button>
                       );
                     })}
@@ -253,10 +261,10 @@ export default function DepartureBrowser({ departures, children }) {
                   hint={month ? `Places with trips in ${monthName(month, { month: "long" })} are shown in colour. Faded ones have none that month.` : "Pick a place, or keep Anywhere to see them all."}>
                   <div role="group" aria-label="Destination" className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
                     <button type="button" onClick={() => setPlace("")} aria-pressed={!place}
-                      className={`flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl border text-center transition ${!place ? "border-ink bg-ink text-white shadow-lg" : "border-line bg-mint text-ink hover:border-brand"}`}>
+                      className={`flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl border text-center transition ${!place ? "border-heirloom bg-heirloom text-white shadow-lg" : "border-line bg-mint text-ink hover:border-brand"}`}>
                       <Icon name="pin" className="h-6 w-6" />
                       <span className="text-sm font-bold">Anywhere</span>
-                      <span className={`text-[11px] ${!place ? "text-brand" : "text-muted"}`}>{plural(placeCount(""), "trip")}</span>
+                      <span className={`text-[11px] ${!place ? "text-white/85" : "text-muted"}`}>{plural(placeCount(""), "trip")}</span>
                     </button>
                     {places.map(({ name, image }) => {
                       const n = placeCount(name);
@@ -264,11 +272,11 @@ export default function DepartureBrowser({ departures, children }) {
                       return (
                         <button key={name} type="button" onClick={() => setPlace(name)} aria-pressed={on}
                           aria-label={`${name}, ${n ? plural(n, "trip") : "no trips"}${month ? ` in ${monthName(month, { month: "long" })}` : ""}`}
-                          className={`group relative aspect-square overflow-hidden rounded-2xl text-left transition ${on ? "ring-4 ring-ink ring-offset-2" : "hover:-translate-y-0.5 hover:shadow-lg"}`}>
+                          className={`group relative aspect-square overflow-hidden rounded-2xl text-left transition ${on ? "ring-4 ring-heirloom ring-offset-2" : "hover:-translate-y-0.5 hover:shadow-lg"}`}>
                           <Image src={image} alt="" fill sizes="(min-width:1024px) 150px, (min-width:640px) 25vw, 33vw"
                             className={`object-cover transition duration-500 group-hover:scale-110 ${n ? "" : "opacity-60 grayscale"}`} />
                           <span className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/20 to-transparent" />
-                          {on && <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-brand text-ink shadow"><Icon name="check" className="h-4 w-4" /></span>}
+                          {on && <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-heirloom text-white shadow"><Icon name="check" className="h-4 w-4" /></span>}
                           <span className="absolute inset-x-0 bottom-0 p-2 text-white">
                             <span className="block text-sm font-bold leading-tight">{name}</span>
                             <span className="block text-[11px] text-white/80">{n ? plural(n, "trip") : "None this month"}</span>
@@ -280,17 +288,17 @@ export default function DepartureBrowser({ departures, children }) {
                 </Step>
               </div>
 
-              <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl bg-ink p-3 pl-5 text-white shadow-lg shadow-ink/20">
+              <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl bg-tomato p-3 pl-5 text-white shadow-lg shadow-tomato/25">
                 <p className="min-w-0 flex-1 text-sm sm:text-base">
-                  <span className="text-white/60">You&apos;ll see </span><span className="font-bold">{summary}</span>
+                  <span className="text-white/85">You&apos;ll see </span><span className="font-bold">{summary}</span>
                 </p>
                 {(month || place) && (
-                  <button type="button" onClick={() => { setMonth(""); setPlace(""); }} className="rounded-full px-3 py-2 text-sm font-semibold text-white/70 transition hover:text-white">
+                  <button type="button" onClick={() => { setMonth(""); setPlace(""); }} className="rounded-full px-3 py-2 text-sm font-semibold text-white/85 transition hover:text-white">
                     Clear choices
                   </button>
                 )}
                 <button type="button" onClick={toList} disabled={!results.length}
-                  className="flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-bold text-ink transition hover:brightness-105 disabled:opacity-40">
+                  className="flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-bold text-tomato transition hover:bg-white/90 disabled:opacity-40">
                   Show trips <Icon name="arrow" className="h-4 w-4 rotate-90" />
                 </button>
               </div>
@@ -307,7 +315,7 @@ export default function DepartureBrowser({ departures, children }) {
             <div>
               <h2 className="text-xl font-bold text-ink sm:text-2xl">{summary}</h2>
               <p className="mt-1 max-w-xl text-sm text-muted">
-                Tap <b className="text-ink">Details</b> to see the full plan, or <b className="text-ink">Book seat</b> to reserve your place with us on WhatsApp.
+                Tap <b className="text-ink">Book Now</b> to book on the trip&apos;s page, <b className="text-ink">Details</b> to see the full plan, or <b className="text-ink">Book via WhatsApp</b> to reserve your place with us in chat.
               </p>
             </div>
             {results.length > 1 && (

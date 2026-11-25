@@ -9,6 +9,9 @@
   --color-muted: #5b6b65;
   --color-coral: #e0573a;
   --color-paper: #f6faf8;
+  /* manager's reds: heirloom = selected / Book Now / seats left, tomato = summary bar. Both pass white text. */
+  --color-heirloom: #9e2b25;
+  --color-tomato: #c4422a;
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
   --font-script: var(--font-caveat), cursive;
   --animate-marquee: marquee 28s linear infinite;
